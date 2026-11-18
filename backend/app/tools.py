@@ -313,7 +313,7 @@ def tool_specs() -> list[dict]:
     s = store()
     return [
         _fn("search_listings",
-            "Search live-market property listings in Saudi Arabia scraped from Wasalt (sale & rent). "
+            "Search a snapshot of public Saudi property listings collected from Wasalt (sale & rent). "
             f"Known cities include: {', '.join(s.cities[:15])}. Types include: {', '.join(s.types[:12])}. "
             "Prices are in SAR; rent prices are YEARLY (divide by 12 for monthly).",
             {"purpose": {"type": "string", "enum": ["sale", "rent"]},

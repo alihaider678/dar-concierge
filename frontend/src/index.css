@@ -19,6 +19,13 @@
 }
 
 html, body, #root { height: 100%; }
+#root { height: 100dvh; }
+
+/* Tailwind v4 preflight resets buttons to cursor:default — restore pointer for all interactive elements */
+@layer base {
+  button:not(:disabled), [role="button"], a[href], summary, label[for], select { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+}
 body {
   @apply bg-ink-950 text-zinc-200 antialiased font-sans;
   background:
