@@ -41,20 +41,52 @@ NOISE = re.compile(
 )
 
 
+PROTECT = ["DarGlobal", "DaVinci", "LinkedIn", "YouTube", "WhatsApp", "TikTok", "McLaren", "iPhone",
+           "PropTech", "FinTech", "GmbH", "RAKEZ", "PLC"]
+GLUE = re.compile(r"(?<=[a-z0-9\)\.%])(?=[A-Z][a-z])|(?<=[a-z])(?=[A-Z]{3,})")
+
+
+def unglue(t: str) -> str:
+    """The site renders labels/values as inline spans, so innerText glues
+    them ("Property TypeSeafront"). Re-insert breaks at case boundaries."""
+    t = t.replace(" ", "\n").replace("\xa0", " ")
+    for i, w in enumerate(PROTECT):
+        t = t.replace(w, f"@@{i}@@")
+    t = GLUE.sub("\n", t)
+    for i, w in enumerate(PROTECT):
+        t = t.replace(f"@@{i}@@", w)
+    return t
+
+
 def clean_text(t: str) -> str:
-    lines = [l.strip() for l in t.splitlines()]
+    t = unglue(t)
+    lines = [l.strip() for l in t.split("\n")]
     lines = [l for l in lines if l and not NOISE.match(l)]
     return "\n".join(lines)
 
 
+SPEC_RE = re.compile(
+    r"(Property Type|Unit Types?|Location|Number of Floors|Area \(sqm\)|Area|Status|Starting Price|"
+    r"Price Starting From|Payment Plan|Completion|Handover|Delivery|Bedrooms|Number of Units|Plot Area)"
+    r"\s*:?\s*\n?(.{2,90}?)(?=\n|$)", re.I)
+
+
 def parse_specs(text: str) -> dict:
-    lines = text.splitlines()
     specs = {}
-    for i, l in enumerate(lines[:-1]):
-        if l.strip().upper() in SPEC_LABELS and len(l.strip()) < 25:
-            key = l.strip().lower().replace(" (sqm)", "_sqm").replace(" ", "_")
-            specs.setdefault(key, lines[i + 1].strip())
-    return specs
+    for label, val in SPEC_RE.findall(text[:6000]):
+        val = val.strip(" :|")
+        key = label.lower().replace(" (sqm)", "_sqm").replace(" ", "_")
+        for unit in ("(SQFT)", "(SQM)"):
+            if val.upper().startswith(unit):
+                key, val = "area_" + unit.strip("()").lower(), val[len(unit):].strip()
+        if not val or not (val[0].isupper() or val[0].isdigit()) or "Area(" in val:
+            continue
+        if val.endswith(".") and len(val) < 40:
+            continue
+        val = val.replace("Photo Gallery", "").strip()
+        if val and len(val) < 90 and not val.lower().startswith(("the ", "we ", "our ")) and key not in specs:
+            specs[key] = val
+    return {k: v for k, v in specs.items() if k != "area" or "area_sqm" not in specs}
 
 
 def guess_country(*texts: str) -> str | None:
