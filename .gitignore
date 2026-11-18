@@ -1,0 +1,14 @@
+.venv/
+node_modules/
+frontend/dist/
+__pycache__/
+*.pyc
+.env
+data/processed/leads.db
+*.log
+.claude/settings.local.json
+data/raw/wasalt_sitemap.txt
+server.log
+vite.log
+snip.png
+*.png

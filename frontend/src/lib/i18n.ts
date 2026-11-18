@@ -1,0 +1,88 @@
+export type Lang = 'en' | 'ar'
+
+export const T = {
+  en: {
+    brand: 'Dar Concierge',
+    tagline: 'AI Property Advisor',
+    heroKicker: 'Agentic AI · DarGlobal × Wasalt',
+    heroTitle1: 'Luxury living worldwide.',
+    heroTitle2: 'The Saudi market, decoded.',
+    heroSub: 'Ask about branded residences by Trump, Pagani or Lamborghini, explore thousands of Saudi listings, run mortgage and yield numbers — one advisor that searches, compares and calculates for you.',
+    placeholder: 'Ask about a project, a budget, a city…',
+    send: 'Send', stop: 'Stop', newChat: 'New conversation',
+    listings: 'Saudi listings', projects: 'DarGlobal projects', cities: 'Cities', countries: 'Countries',
+    luxury: 'Global luxury', saudi: 'Saudi market', tools: 'Investment tools',
+    trace: 'Agent reasoning', steps: 'steps', thinking: 'Thinking', planning: 'Planning',
+    composing: 'Composing answer', fallback: 'Switched model', viewSource: 'View source',
+    onWasalt: 'View on Wasalt', explore: 'Explore project', beds: 'bd', baths: 'ba', sqm: 'sqm',
+    monthly: 'Monthly payment', loan: 'Loan', down: 'Down payment', interest: 'Total interest',
+    gross: 'Gross yield', net: 'Net yield', payback: 'Payback',
+    median: 'Median price', perSqm: 'Median / sqm', range: 'Middle 50%', topDistricts: 'Most active districts',
+    leadSaved: 'Request registered', ref: 'Reference',
+    collection: 'The collection', disclaimer: 'Unofficial candidate demo built on public data. Not affiliated with DarGlobal or Wasalt. Not financial advice.',
+    poweredBy: 'Free OpenRouter models', map: 'Map', sale: 'Sale', rent: 'Rent',
+    compare: 'Side-by-side', retry: 'Retry',
+  },
+  ar: {
+    brand: 'دار كونسيرج',
+    tagline: 'مستشارك العقاري الذكي',
+    heroKicker: 'ذكاء اصطناعي وكيلي · دار جلوبال × وصلت',
+    heroTitle1: 'فخامة عالمية.',
+    heroTitle2: 'وسوق سعودي بين يديك.',
+    heroSub: 'اسأل عن المساكن ذات العلامات التجارية مثل ترامب وباغاني ولامبورغيني، واستكشف آلاف العقارات في السعودية، واحسب التمويل والعائد — مستشار واحد يبحث ويقارن ويحسب لك.',
+    placeholder: 'اسأل عن مشروع أو ميزانية أو مدينة…',
+    send: 'إرسال', stop: 'إيقاف', newChat: 'محادثة جديدة',
+    listings: 'عقار في السعودية', projects: 'مشروع دار جلوبال', cities: 'مدينة', countries: 'دولة',
+    luxury: 'الفخامة العالمية', saudi: 'السوق السعودي', tools: 'أدوات الاستثمار',
+    trace: 'خطوات الوكيل', steps: 'خطوات', thinking: 'يفكر', planning: 'يخطط',
+    composing: 'يكتب الإجابة', fallback: 'تم تبديل النموذج', viewSource: 'المصدر',
+    onWasalt: 'عرض في وصلت', explore: 'استكشف المشروع', beds: 'غرف', baths: 'حمام', sqm: 'م²',
+    monthly: 'القسط الشهري', loan: 'التمويل', down: 'الدفعة الأولى', interest: 'إجمالي الفوائد',
+    gross: 'العائد الإجمالي', net: 'العائد الصافي', payback: 'فترة الاسترداد',
+    median: 'السعر الوسيط', perSqm: 'الوسيط / م²', range: 'النطاق الأوسط', topDistricts: 'الأحياء الأكثر نشاطاً',
+    leadSaved: 'تم تسجيل طلبك', ref: 'المرجع',
+    collection: 'المجموعة', disclaimer: 'نموذج تجريبي غير رسمي مبني على بيانات عامة. غير تابع لدار جلوبال أو وصلت. ليس نصيحة مالية.',
+    poweredBy: 'نماذج OpenRouter مجانية', map: 'الخريطة', sale: 'بيع', rent: 'إيجار',
+    compare: 'مقارنة', retry: 'إعادة المحاولة',
+  },
+} as const
+
+export type Dict = { [K in keyof typeof T.en]: string }
+
+export const PROMPTS: Record<Lang, { group: 'luxury' | 'saudi' | 'tools'; text: string }[]> = {
+  en: [
+    { group: 'luxury', text: 'Which DarGlobal projects are branded with Trump, and where are they?' },
+    { group: 'luxury', text: 'Compare DaVinci Tower by Pagani with Trump Tower Jeddah' },
+    { group: 'luxury', text: 'What can I buy in Oman with a sea view, and does it come with residency?' },
+    { group: 'saudi', text: 'Find 3-bedroom apartments for sale in Riyadh under SAR 1.2M' },
+    { group: 'saudi', text: 'What is the median villa price in Jeddah and which districts are most active?' },
+    { group: 'saudi', text: 'Show me furnished apartments for rent in Al Khobar' },
+    { group: 'tools', text: 'Mortgage on a SAR 2M villa with 20% down over 25 years?' },
+    { group: 'tools', text: 'If I buy at AED 3.5M and rent for AED 220K a year, what is my yield?' },
+    { group: 'tools', text: 'I want to book a call with an advisor about AIDA Oman' },
+  ],
+  ar: [
+    { group: 'luxury', text: 'ما هي مشاريع دار جلوبال التي تحمل علامة ترامب وأين تقع؟' },
+    { group: 'luxury', text: 'قارن بين برج دافنشي من باغاني وبرج ترامب جدة' },
+    { group: 'luxury', text: 'ما الخيارات المطلة على البحر في عُمان وهل تمنح إقامة؟' },
+    { group: 'saudi', text: 'أبحث عن شقة ٣ غرف للبيع في الرياض بأقل من ١٫٢ مليون ريال' },
+    { group: 'saudi', text: 'ما متوسط سعر الفلل في جدة وما أكثر الأحياء نشاطاً؟' },
+    { group: 'saudi', text: 'اعرض شققاً مفروشة للإيجار في الخبر' },
+    { group: 'tools', text: 'كم القسط الشهري لفيلا بمليوني ريال بدفعة ٢٠٪ على ٢٥ سنة؟' },
+    { group: 'tools', text: 'لو اشتريت بـ ٣٫٥ مليون درهم وأجّرت بـ ٢٢٠ ألف سنوياً، كم العائد؟' },
+    { group: 'tools', text: 'أريد حجز مكالمة مع مستشار بخصوص آيدا عُمان' },
+  ],
+}
+
+export const TOOL_LABELS: Record<string, { en: string; ar: string }> = {
+  search_listings: { en: 'Searching Wasalt listings', ar: 'البحث في عقارات وصلت' },
+  market_stats: { en: 'Analysing market data', ar: 'تحليل بيانات السوق' },
+  search_darglobal: { en: 'Searching DarGlobal knowledge', ar: 'البحث في محتوى دار جلوبال' },
+  list_darglobal_projects: { en: 'Listing DarGlobal projects', ar: 'عرض مشاريع دار جلوبال' },
+  get_project_details: { en: 'Reading project details', ar: 'قراءة تفاصيل المشروع' },
+  compare_projects: { en: 'Comparing projects', ar: 'مقارنة المشاريع' },
+  calculate_mortgage: { en: 'Calculating mortgage', ar: 'حساب التمويل' },
+  estimate_rental_yield: { en: 'Estimating rental yield', ar: 'تقدير العائد الإيجاري' },
+  convert_currency: { en: 'Converting currency', ar: 'تحويل العملة' },
+  capture_lead: { en: 'Registering your request', ar: 'تسجيل طلبك' },
+}
