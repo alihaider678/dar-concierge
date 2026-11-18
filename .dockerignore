@@ -6,3 +6,4 @@ data/raw
 .git
 .env
 *.log
+frontend/.env.production
