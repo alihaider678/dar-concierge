@@ -1,6 +1,6 @@
 # Dar Concierge — Agentic AI Property Advisor
 
-**Live demo:** _(added after deploy)_
+**Live demo:** https://dar-concierge.onrender.com  _(free instance; the first request after idle can take ~50s to wake up)_
 
 An agentic chatbot grounded in publicly available data from **DarGlobal** (international luxury
 branded residences) and **Wasalt** (Saudi property portal). These are two sister companies of the
@@ -62,8 +62,8 @@ The UI supports English and **Arabic with RTL layout**, streams responses, and r
 
 | Source | How | Volume |
 |---|---|---|
-| DarGlobal | URLs from the public `sitemap.xml` (paths that `robots.txt` allows). The site is JS-rendered, so pages are rendered with Playwright Chromium. 3 workers with delays between requests. | ~460 pages (projects, partners, one-of-one, insights, press, blog) |
-| Wasalt | Wasalt publishes [`llms.txt`](https://wasalt.sa/llms.txt), which allows extraction of public listing content at a moderate rate. Public SEO search pages were read in a normal browser session (`scraper/wasalt_browser_collector.js`). | ~1–2k listings across 7 cities, sale & rent |
+| DarGlobal | URLs from the public `sitemap.xml` (paths that `robots.txt` allows). The site is JS-rendered, so pages are rendered with Playwright Chromium. 3 workers with delays between requests. | 458 pages → 44 projects, ~3.9k passages |
+| Wasalt | Wasalt publishes [`llms.txt`](https://wasalt.sa/llms.txt), which allows extraction of public listing content at a moderate rate. Public SEO search pages were read in a normal browser session (`scraper/wasalt_browser_collector.js`). | 849 listings across 7 cities (476 sale / 373 rent) |
 
 **Responsible scraping:** no owner names, phone numbers, WhatsApp links or other contact data
 are stored. Requests are rate-limited, and Wasalt is sampled instead of crawled in full. Every listing keeps its
