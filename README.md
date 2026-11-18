@@ -1,6 +1,10 @@
 # Dar Concierge — Agentic AI Property Advisor
 
-**Live demo:** https://dar-concierge.onrender.com  _(free instance; the first request after idle can take ~50s to wake up)_
+**Live demo:** https://dar-concierge.vercel.app
+
+* Frontend: Vercel (static React build, global CDN)
+* Backend / full app container: https://dar-concierge.onrender.com (Docker on Render; also serves the UI itself)
+* A GitHub Actions job pings the backend every 10 min so it stays warm, and the UI wakes it and shows its status on load
 
 An agentic chatbot grounded in publicly available data from **DarGlobal** (international luxury
 branded residences) and **Wasalt** (Saudi property portal). These are two sister companies of the
@@ -99,8 +103,8 @@ python scraper/build_index.py
 
 ## Deploy
 
-The app is one container, so it runs on any Docker host. It is deployed on **Render** (`render.yaml`, Docker
-runtime, free plan). The only secret is `OPENROUTER_API_KEY`.
+The app is one container, so it runs on any Docker host. The Docker image runs on **Render** (`render.yaml`, free plan). The only secret is `OPENROUTER_API_KEY`.
+The same React build is also deployed to **Vercel** (`frontend/vercel.json`), with `VITE_API_BASE` pointing at the Render API.
 
 ## Stack
 
