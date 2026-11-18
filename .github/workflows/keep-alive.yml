@@ -1,0 +1,13 @@
+# Render's free tier sleeps after ~15 min idle (≈50s cold start).
+# Ping the health endpoint every 10 minutes so reviewers get an instant agent.
+name: keep-alive
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - run: curl -fsS --max-time 90 https://dar-concierge.onrender.com/api/health || true

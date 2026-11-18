@@ -1,5 +1,8 @@
 export type Role = 'user' | 'assistant'
 
+// Empty in the Docker build (same origin); set to the Render API URL on Vercel.
+export const API_BASE = (import.meta.env.VITE_API_BASE as string | undefined)?.replace(/\/$/, '') ?? ''
+
 export interface ListingCard {
   kind: 'listing'; id: number; title: string; url: string; purpose: string; type: string
   city: string; district: string; price: number; currency: string; rent_frequency?: string | null
@@ -58,7 +61,7 @@ export async function streamChat(
   onEvent: (e: AgentEvent) => void,
   signal?: AbortSignal,
 ) {
-  const res = await fetch('/api/chat', {
+  const res = await fetch(`${API_BASE}/api/chat`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages }), signal,
   })
@@ -84,7 +87,26 @@ export async function streamChat(
   }
 }
 
-export const getJSON = <T,>(url: string): Promise<T> => fetch(url).then(r => r.json())
+export const getJSON = <T,>(url: string): Promise<T> => fetch(`${API_BASE}${url}`).then(r => {
+  if (!r.ok) throw new Error(String(r.status))
+  return r.json()
+})
+
+/** Wake the (free-tier) backend as soon as the page opens; resolves when it answers. */
+export async function wakeBackend(onTry?: (n: number) => void): Promise<boolean> {
+  for (let n = 1; n <= 20; n++) {
+    onTry?.(n)
+    try {
+      const ctrl = new AbortController()
+      const t = setTimeout(() => ctrl.abort(), 15000)
+      const r = await fetch(`${API_BASE}/api/health`, { signal: ctrl.signal })
+      clearTimeout(t)
+      if (r.ok) return true
+    } catch { /* still waking */ }
+    await new Promise(r => setTimeout(r, 2500))
+  }
+  return false
+}
 
 export function money(v: number | null | undefined, cur = 'SAR') {
   if (v == null || isNaN(v)) return '—'

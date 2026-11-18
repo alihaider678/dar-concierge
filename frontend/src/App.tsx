@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm'
 import { CardDeck } from './components/Cards'
 import Trace from './components/Trace'
 import type { AgentEvent, Message, ProjectSummary, Stats } from './lib/api'
-import { getJSON, streamChat } from './lib/api'
+import { getJSON, streamChat, wakeBackend } from './lib/api'
 import type { Lang } from './lib/i18n'
 import { PROMPTS, T } from './lib/i18n'
 
@@ -30,9 +30,17 @@ export default function App() {
     document.documentElement.lang = lang
     localStorage.setItem('dc-lang', lang)
   }, [lang])
+  const [backend, setBackend] = useState<'waking' | 'ready' | 'down'>('waking')
   useEffect(() => {
-    getJSON<Stats>('/api/stats').then(setStats).catch(() => {})
-    getJSON<ProjectSummary[]>('/api/projects').then(p => setProjects(p.filter(x => x.image))).catch(() => {})
+    let alive = true
+    wakeBackend().then(ok => {
+      if (!alive) return
+      setBackend(ok ? 'ready' : 'down')
+      if (!ok) return
+      getJSON<Stats>('/api/stats').then(setStats).catch(() => {})
+      getJSON<ProjectSummary[]>('/api/projects').then(p => setProjects(p.filter(x => x.image))).catch(() => {})
+    })
+    return () => { alive = false }
   }, [])
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }) }, [messages])
 
@@ -148,11 +156,28 @@ export default function App() {
                   className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-gold-200 to-gold-500 text-ink-950 transition hover:brightness-110 disabled:opacity-30"><ArrowUp className="h-5 w-5" /></button>
               )}
             </form>
-            <p className="mt-2 text-center text-[10.5px] text-zinc-600">{t.disclaimer}</p>
+            <p className="mt-2 flex items-center justify-center gap-3 text-center text-[10.5px] text-zinc-600">
+              <BackendPill state={backend} lang={lang} />
+              <span className="hidden sm:inline">{t.disclaimer}</span>
+            </p>
           </div>
         </div>
       </main>
     </div>
+  )
+}
+
+function BackendPill({ state, lang }: { state: 'waking' | 'ready' | 'down'; lang: Lang }) {
+  const label = {
+    waking: lang === 'ar' ? 'جارٍ تشغيل الوكيل…' : 'Waking up the agent…',
+    ready: lang === 'ar' ? 'الوكيل جاهز' : 'Agent online',
+    down: lang === 'ar' ? 'الخادم غير متاح' : 'Agent unavailable — retry shortly',
+  }[state]
+  const dot = { waking: 'bg-amber-400 animate-pulse', ready: 'bg-emerald-400', down: 'bg-rose-400' }[state]
+  return (
+    <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-white/10 px-2 py-0.5 text-zinc-400">
+      <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />{label}
+    </span>
   )
 }
 
